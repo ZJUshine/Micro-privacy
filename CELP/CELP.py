@@ -5,7 +5,7 @@ import librosa
 import pandas as pd
 from scipy.signal import lfilter
 from tqdm import tqdm
-
+import os
 
 class CELP(object):
     '''
@@ -41,83 +41,84 @@ class CELP(object):
                     LPCorder=16, 
                     gamma = 0.85, 
                     SCB_num=1024, 
-                    codebook_exist=False, 
                     pitch=(50, 500), 
                     target_sr=16000,
                     save_wav = True
                     ):
-        # self.data, self.sr = sf.read(wave_path)
-        self.wave_path = wave_path
-        # self.target_sr = target_sr
-        self.sr = target_sr
+
+        self.wave_path = wave_path                           # path of original audio
+        self.sr = target_sr                                  # sample rate of audio
         self.orig_data, self.orig_sr = sf.read(self.wave_path)
         if self.orig_sr != self.sr:
             self.data = librosa.resample(y=self.orig_data, orig_sr=self.orig_sr, target_sr=self.sr)
         else: 
             self.data = self.orig_data
-        self.save_path = save_path
-        self.frame_duration = frame_duration  # duration of per frame
-        self.subframe_num = subframe_num
-        self.LPCorder = LPCorder
-        self.gamma = gamma
-        self.N = int(self.sr * self.frame_duration)  # frame length
-        self.M = int(self.N / self.subframe_num)   # subframe length
-        self.SCB_num = SCB_num   # Stochastic codebook index length
+        self.save_path = save_path                           # path of audio after codec
+        self.frame_duration = frame_duration                 # duration of per frame
+        self.subframe_num = subframe_num                     # subframe number per frame
+        self.LPCorder = LPCorder                             # LPC order
+        self.gamma = gamma                                   # perceptual weighted filter coefficient
+        self.N = int(self.sr * self.frame_duration)          # frame data length
+        self.M = int(self.N / self.subframe_num)             # subframe data length
+        self.SCB_num = SCB_num                               # Stochastic codebook index length
 
-        ## load codebook
-        if codebook_exist == True:
-            self.SCB = pd.read_csv('/home/xsl/micprivacy/code/codebook.csv', sep=',', header=None)
+        # load codebook
+        if os.path.exists("./codebook.csv"):
+            self.SCB = pd.read_csv('./codebook.csv', sep=',', header=None)
             self.SCB = np.array(self.SCB)
             if self.SCB.shape[0] != self.SCB_num:
                 raise ValueError('shape[0] of exist codebook does not match attribute [self.SCB_num] !')
             if self.SCB.shape[1] != self.M:
                 raise ValueError('shape[1] of exist codebook does not match attribute [self.M] !')
         else:
-            self.SCB = np.random.randn(self.SCB_num, self.M)   # create Stochatic codebook index length 1024*M
+            self.SCB = np.random.randn(self.SCB_num, self.M)                      # create Stochatic codebook index length 1024*M
         
-        self.pitch = pitch  # range of pitch, Hz
-        self.Pidx = (int(self.sr/self.pitch[1]), int(self.sr/self.pitch[0]))
-        self.Ndata = len(self.data)  # length of data
-        self.frame_num = np.fix(self.Ndata / self.N).astype(np.int16)  # No. of frames
-        print('File name: %s, sample rate: %d' %(self.wave_path, self.sr))
+        self.pitch = pitch                                                        # range of pitch, Hz
+        self.Pidx = (int(self.sr/self.pitch[1]), int(self.sr/self.pitch[0]))      # pitch index range
+        self.Ndata = len(self.data)                                               # length of data
+        self.frame_num = np.fix(self.Ndata / self.N).astype(np.int16)             # frame number
+        print(f'File name: {self.wave_path}, sample rate: {self.sr}')
         self.new_data = np.zeros(self.Ndata)
-        self.ak = np.zeros((self.frame_num, self.LPCorder + 1))
-        self.save_wav = save_wav
+        self.ak = np.zeros((self.frame_num, self.LPCorder + 1))                   # save LPC coefficients
+        self.save_wav = save_wav                                                  # save the audio after codec
 
     def run(self):
         ## initialize output signals
         # new_data = np.zeros((self.Ndata, 1))  # synthesized signal
-        e = np.zeros((self.Ndata,1))  # excitation signal
-        SCB_indx = np.zeros((self.frame_num, self.subframe_num))  # rows are excitation  
-        theta0 = np.zeros((self.frame_num, self.subframe_num))  # parameters per frame
+        e = np.zeros((self.Ndata,1))                                           # excitation signal
+        SCB_indx = np.zeros((self.frame_num, self.subframe_num))               # rows are excitation  
+        theta0 = np.zeros((self.frame_num, self.subframe_num))                 # parameters per frame
         P = np.zeros((self.frame_num, self.subframe_num)) 
         b = np.zeros((self.frame_num, self.subframe_num))
-        ebuf = np.zeros(self.Pidx[1])  # vectors with previous excitation
+        ebuf = np.zeros(self.Pidx[1])                                          # vectors with previous excitation
         ebuf2 = ebuf.copy()
-        bbuf = 0  # samples
+        bbuf = 0
         Zf = np.zeros(self.LPCorder)
         Zw = np.zeros(self.LPCorder)
-        Zi = np.zeros(self.LPCorder)  # memory hangover in filters
+        Zi = np.zeros(self.LPCorder)                                           # memory hangover in filters
 
         
-        print('Frame number: %d' %(self.frame_num))
+        print(f'Frame number: {self.frame_num}')
         for i in tqdm(range(self.frame_num)):
-            n = np.arange(i*self.N, (i+1)*self.N)   # time index of current speech frame
-            SCB_indxf, theta0f, akf, Pf, bf, ebuf, Zf, Zw = self.Analysis_by_synthesis(self.data[n], bbuf, ebuf, Zf, Zw, i)   # extract params with AbS
+            # time index of current frame
+            n = np.arange(i*self.N, (i+1)*self.N)                              
 
-            self.new_data[n], ebuf2, Zi = self.celpsyns(akf, SCB_indxf, theta0f, Pf, bf, ebuf2, Zi)   # synthesis new frame
-            # inter2 = time.time()
+            # extract params with AbS
+            SCB_indxf, theta0f, akf, Pf, bf, ebuf, Zf, Zw = self.Analysis_by_synthesis(self.data[n], bbuf, ebuf, Zf, Zw, i)
             
-            ## store params 
+            # synthesis new frame
+            self.new_data[n], ebuf2, Zi = self.celpsyns(akf, SCB_indxf, theta0f, Pf, bf, ebuf2, Zi)
+            
+            ## save params 
             SCB_indx[i, :] = SCB_indxf
             theta0[i, :] = theta0f
             P[i, :] = Pf 
             b[i, :] = bf
             bbuf = bf[-1]  # last estimated b used in next frame
-            # print('Abs time = %ss, syns time = %ss' %(inter1-start, inter2-start))
+
         if self.save_wav == True:
             sf.write(self.save_path, self.new_data, self.sr)
-            print('Save output file: %s' %(self.save_path))
+            print(f'Save output file: {self.save_path}')
         return self.new_data
 
 
