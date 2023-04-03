@@ -35,7 +35,7 @@ class CELP(object):
         Whether to save the audio after codec. Default=False.
     '''
 
-    def __init__(self, wave_path, save_path, 
+    def __init__(self, wave_path, save_path, anonypara,
                     frame_duration=0.02, 
                     subframe_num=4, 
                     LPCorder=16, 
@@ -61,7 +61,7 @@ class CELP(object):
         self.N = int(self.sr * self.frame_duration)          # frame data length
         self.M = int(self.N / self.subframe_num)             # subframe data length
         self.SCB_num = SCB_num                               # Stochastic codebook index length
-
+        self.anonypara = anonypara                           # anonymization parameter
         # load codebook
         if os.path.exists("./codebook.csv"):
             self.SCB = pd.read_csv('./codebook.csv', sep=',', header=None)
@@ -77,7 +77,7 @@ class CELP(object):
         self.Pidx = (int(self.sr/self.pitch[1]), int(self.sr/self.pitch[0]))      # pitch index range
         self.Ndata = len(self.data)                                               # length of data
         self.frame_num = np.fix(self.Ndata / self.N).astype(np.int16)             # frame number
-        print(f'File name: {self.wave_path}, sample rate: {self.sr}')
+        # print(f'File name: {self.wave_path}, sample rate: {self.sr}')
         self.new_data = np.zeros(self.Ndata)
         self.ak = np.zeros((self.frame_num, self.LPCorder + 1))                   # save LPC coefficients
         self.save_wav = save_wav                                                  # save the audio after codec
@@ -98,16 +98,15 @@ class CELP(object):
         Zi = np.zeros(self.LPCorder)                                           # memory hangover in filters
         lsfs = np.zeros((self.frame_num, self.LPCorder))
         
-        print(f'Frame number: {self.frame_num}')
+        # print(f'Frame number: {self.frame_num}')
         for i in tqdm(range(self.frame_num)):
             # time index of current frame
             n = np.arange(i*self.N, (i+1)*self.N)                              
 
             # extract params with AbS
             lsf = self.encoder_lsf(self.data[n], i)
-
+            lsf = self.anonymize_lsf(lsf)
             lsfs[i,:] = lsf
-            lsf = lsf * 1.2
             SCB_indxf, theta0f, akf, Pf, bf, ebuf, Zf, Zw = self.decoder_lsf( lsf, self.data[n], bbuf, ebuf, Zf, Zw, i)
             
             # synthesis new frame
@@ -122,12 +121,13 @@ class CELP(object):
 
         if self.save_wav == True:
             sf.write(self.save_path, self.new_data, self.sr)
-            print(f'Save output file: {self.save_path}')
+            # print(f'Save output file: {self.save_path}')
         return self.new_data, lsfs
-
-
+        
+    def anonymize_lsf(self,lsfs):
+        x1,x2 = self.anonypara
+        return x1*lsfs+x2
     def encoder_lsf(self, x, i):
-
         SCB_indxf = np.zeros(self.subframe_num).astype(int)
         theta0f = np.zeros(self.subframe_num)
         Pf = np.zeros(self.subframe_num).astype(int)
