@@ -43,7 +43,8 @@ class CELP(object):
                     SCB_num=1024, 
                     pitch=(50, 500), 
                     target_sr=16000,
-                    save_wav = True
+                    save_wav = True,
+                    anony = True
                     ):
 
         self.wave_path = wave_path                           # path of original audio
@@ -81,7 +82,7 @@ class CELP(object):
         self.new_data = np.zeros(self.Ndata)
         self.ak = np.zeros((self.frame_num, self.LPCorder + 1))                   # save LPC coefficients
         self.save_wav = save_wav                                                  # save the audio after codec
-        
+        self.anony = anony                                                        # whether to anonymize the audio
     def run(self):
         ## initialize output signals
         # new_data = np.zeros((self.Ndata, 1))  # synthesized signal
@@ -105,7 +106,8 @@ class CELP(object):
 
             # extract params with AbS
             lsf = self.encoder_lsf(self.data[n], i)
-            lsf = self.anonymize_lsf(lsf)
+            if (self.anony):
+                lsf = self.anonymize_lsf(lsf)
             lsfs[i,:] = lsf
             SCB_indxf, theta0f, akf, Pf, bf, ebuf, Zf, Zw = self.decoder_lsf( lsf, self.data[n], bbuf, ebuf, Zf, Zw, i)
             
@@ -126,6 +128,9 @@ class CELP(object):
         
     def anonymize_lsf(self,lsfs):
         x1,x2 = self.anonypara
+        for i in range(len(lsfs)):
+            if (lsfs[i] < 3*np.pi/8 and lsfs[i] > np.pi/40):
+                lsfs[i] = x1*lsfs[i]+x2
         return x1*lsfs+x2
     def encoder_lsf(self, x, i):
         SCB_indxf = np.zeros(self.subframe_num).astype(int)
