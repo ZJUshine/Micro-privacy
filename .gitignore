@@ -1,0 +1,5 @@
+*.ckpt
+*.test
+*.log
+*.pyc
+*yaml
