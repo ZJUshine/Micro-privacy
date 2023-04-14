@@ -1,13 +1,23 @@
+'''
+FilePath: PetersonBarney_draw_2d.py
+Author: zjushine
+Date: 2023-04-14 17:48:23
+LastEditors: zjushine
+LastEditTime: 2023-04-14 21:46:19
+Description: 数据集：PetersonBarney的2D散点图（F1，F2）
+Copyright (c) 2023 by ${zjushine}, All Rights Reserved. 
+'''
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+# 数据集路径
 path = "./verified_pb.txt"
 df = pd.read_csv(path, header=None,sep="\t")
 #解决不能显示中文的问题
 plt.rcParams['axes.unicode_minus']=False
 
 df.columns = ['0','1','2','3','4','5','6','7']
-print(df)
+
 #画多组数据的散点图
 IYx = [];IYy = []
 IHx = [];IHy = []
@@ -70,11 +80,11 @@ plt.xlim([0,1500])
 plt.ylim([0,3500])
 plt.xlabel("F1 (Hz)" ,fontsize = 14)
 plt.ylabel("F2 (Hz)" ,fontsize = 14)
-#显示图例 
+#显示图例
 plt.legend(loc=1)
 plt.grid()
 #给标题
 plt.title(path.split(".")[-2].split("_")[-1],fontsize = 14)
 plt.show()
-plt.savefig(f"./fig/best.png")
+plt.savefig(f"./fig/PetersonBarney_draw_2d.png")
 plt.clf()

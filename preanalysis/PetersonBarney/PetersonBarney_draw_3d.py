@@ -1,13 +1,21 @@
-# %%
+'''
+FilePath: PetersonBarney_draw_3d.py
+Author: zjushine
+Date: 2023-04-14 17:48:23
+LastEditors: zjushine
+LastEditTime: 2023-04-14 21:25:33
+Description: 数据集：PetersonBarney的3D散点图（F1,F2,F3）
+Copyright (c) 2023 by ${zjushine}, All Rights Reserved. 
+'''
 import pandas as pd
 import matplotlib.pyplot as plt
+# 数据集路径
 path = "./verified_pb.txt"
 df = pd.read_csv(path, header=None,sep="\t")
 #解决不能显示中文的问题
 plt.rcParams['axes.unicode_minus']=False
 
 df.columns = ['0','1','2','3','4','5','6','7']
-print(df)
 
 #画多组数据的散点图
 IYx = [];IYy = [];IYz = []
@@ -88,4 +96,4 @@ plt.legend(loc="upper left",fontsize=10)
 plt.grid()
 plt.savefig(f"./fig/PetersonBarney_3d.png")
 plt.clf()
-# %%
+
