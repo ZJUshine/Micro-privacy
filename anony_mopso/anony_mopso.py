@@ -25,8 +25,8 @@ results_output_path = f"results/{_date}_{now}"
 
 problem = omopso()
 mutation_probability = 1.0 / problem.number_of_variables
-max_evaluations = 25000
-swarm_size = 100
+max_evaluations = 4000
+swarm_size = 20
 
 algorithm = OMOPSO(
     problem=problem,
@@ -34,7 +34,7 @@ algorithm = OMOPSO(
     epsilon=0.0075,
     uniform_mutation=UniformMutation(probability=mutation_probability, perturbation=0.2),
     non_uniform_mutation=NonUniformMutation(probability=mutation_probability, perturbation=0.2, max_iterations = int(max_evaluations / swarm_size)),
-    leaders=CrowdingDistanceArchive(100),
+    leaders=CrowdingDistanceArchive(swarm_size),
     termination_criterion=StoppingByEvaluations(max_evaluations = max_evaluations),
 )
 
