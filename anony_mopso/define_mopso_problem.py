@@ -3,7 +3,7 @@ FilePath: define_mopso_problem.py
 Author: zjushine
 Date: 2023-04-07 14:02:33
 LastEditors: zjushine
-LastEditTime: 2023-04-23 14:22:42
+LastEditTime: 2023-04-25 15:38:05
 Description: 定义一个MOPSO的优化问题
 Copyright (c) 2023 by ${zjushine}, All Rights Reserved. 
 '''
@@ -14,12 +14,11 @@ from CELP import CELP
 import soundfile as sf
 import fastwer
 import pystoi
-import sys
-sys.path.append('/home/lxc/zero/speechbrain/pretrained_models')
+
 from speechbrain.pretrained import SpeakerRecognition
-verification = SpeakerRecognition.from_hparams(source="speechbrain/spkrec-ecapa-voxceleb", savedir="pretrained_models/spkrec-ecapa-voxceleb")
+verification = SpeakerRecognition.from_hparams(source="speechbrain/spkrec-ecapa-voxceleb", savedir="/home/lxc/zero/speechbrain/pretrained_models/spkrec-ecapa-voxceleb")
 from speechbrain.pretrained import EncoderDecoderASR
-asr_model = EncoderDecoderASR.from_hparams(source="speechbrain/asr-crdnn-rnnlm-librispeech", savedir="pretrained_models/asr-crdnn-rnnlm-librispeech")
+asr_model = EncoderDecoderASR.from_hparams(source="speechbrain/asr-crdnn-rnnlm-librispeech", savedir="/home/lxc/zero/speechbrain/pretrained_models/asr-crdnn-rnnlm-librispeech")
 import torch
 
 class omopso(FloatProblem):
@@ -29,14 +28,14 @@ class omopso(FloatProblem):
         self.number_of_variables = 2
         self.number_of_objectives = 3
         self.number_of_constraints = 0
-        self.lower_bound = [0.9, -0.01] 
-        self.upper_bound = [1.1, 0.01]
+        self.lower_bound = [-0.1, 0.9] 
+        self.upper_bound = [0.1, 1.1]
 
     def evaluate(self, solution: FloatSolution) -> FloatSolution:
         x = solution.variables
-        orig_data, sr = sf.read('/home/lxc/datasets/LibriSpeech/test-clean/61/70968/61-70968-0000.flac')
+        orig_data, sr = sf.read('61-70968-0000.flac')
         anon_data, sr = sf.read('61-70968-0000test.flac')
-        codec = CELP(wave_path=r'/home/lxc/datasets/LibriSpeech/test-clean/61/70968/61-70968-0000.flac',
+        codec = CELP(wave_path=r'61-70968-0000.flac',
                         save_path=r'61-70968-0000test.flac',anonypara=x,anony=True)
         ref = ["HE BEGAN A CONFUSED COMPLAINT AGAINST THE WIZARD WHO HAD VANISHED BEHIND THE CURTAIN ON THE LEFT"]
         _,lsfs = codec.run()

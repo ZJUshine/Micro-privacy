@@ -3,42 +3,47 @@ FilePath: anony_mopso.py
 Author: zjushine
 Date: 2023-04-06 13:53:14
 LastEditors: zjushine
-LastEditTime: 2023-04-23 14:23:43
+LastEditTime: 2023-04-25 15:38:53
 Description: mospo 优化问题
 Copyright (c) 2023 by ${zjushine}, All Rights Reserved. 
 '''
 from jmetal.algorithm.multiobjective.omopso import OMOPSO
 from jmetal.operator import UniformMutation
 from jmetal.operator.mutation import NonUniformMutation
-from jmetal.problem import ZDT1
 from jmetal.util.archive import CrowdingDistanceArchive
 from jmetal.util.termination_criterion import StoppingByEvaluations
 from jmetal.util.solution import (
     print_function_values_to_file,
-    print_variables_to_file,
-    read_solutions,
+    print_variables_to_file
 )
 from define_mopso_problem import omopso
+from datetime import datetime
+_date = '{}'.format(datetime.now().strftime("%m%d"))
+now = '{}'.format(datetime.now().strftime("%H%M"))
+
+results_output_path = f"results/{_date}_{now}"
 
 problem = omopso()
+mutation_probability = 1.0 / problem.number_of_variables
+max_evaluations = 25000
+swarm_size = 100
 
 algorithm = OMOPSO(
     problem=problem,
-    swarm_size=5,
+    swarm_size = swarm_size,
     epsilon=0.0075,
-    uniform_mutation=UniformMutation(probability=1.0/3, perturbation=0.5),  # probability = 1/number_of_variables
-    non_uniform_mutation=NonUniformMutation(
-        1.0/3, perturbation=0.5, max_iterations = 250
-    ),  # max_iterations=max_evaluations / swarm_size
-    leaders=CrowdingDistanceArchive(10),
-    termination_criterion=StoppingByEvaluations(max_evaluations=5),
+    uniform_mutation=UniformMutation(probability=mutation_probability, perturbation=0.2),
+    non_uniform_mutation=NonUniformMutation(probability=mutation_probability, perturbation=0.2, max_iterations = int(max_evaluations / swarm_size)),
+    leaders=CrowdingDistanceArchive(100),
+    termination_criterion=StoppingByEvaluations(max_evaluations = max_evaluations),
 )
 
 algorithm.run()
 solutions = algorithm.get_result()
 # save results to file
-print_function_values_to_file(solutions, '/home/lxc/zero/Micro-privacy/omopso/dataFUN.' + problem.get_name())
-print_variables_to_file(solutions, '/home/lxc/zero/Micro-privacy/omopso/dataVAR.' + problem.get_name())
+print_function_values_to_file(solutions, f'{results_output_path}/dataFUN.' + problem.get_name())
+print_variables_to_file(solutions, f'{results_output_path}/dataVAR.' + problem.get_name())
+
 
 print(f"Algorithm: {algorithm.get_name()}")
 print(f"Problem: {problem.get_name()}")
@@ -51,5 +56,5 @@ from jmetal.util.solution import get_non_dominated_solutions
 front = get_non_dominated_solutions(solutions)
 
 plot_front = Plot(title='Pareto front approximation', axis_labels=['x', 'y'])
-plot_front.plot(front, label='OMOPSO-ZDT1',filename="OMPPSO-ZDT1",format="png")
+plot_front.plot(front, label='OMOPSO-Micro_mopso',filename=f"{results_output_path}/OMOPSO-Micro_mopso",format="png")
 
