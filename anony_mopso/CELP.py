@@ -125,19 +125,20 @@ class CELP(object):
             sf.write(self.save_path, self.new_data, self.sr)
             # print(f'Save output file: {self.save_path}')
         return self.new_data, lsfs
-        
-    def anonymize_lsf(self,lsfs):
-        x1,x2 = self.anonypara
-        for i in range(len(lsfs)):
-            if (lsfs[i] < 3*np.pi/8 and lsfs[i] > np.pi/40):
-                lsfs[i] = x1*lsfs[i]+x2
-        return x1*lsfs+x2
-    def encoder_lsf(self, x, i):
-        SCB_indxf = np.zeros(self.subframe_num).astype(int)
-        theta0f = np.zeros(self.subframe_num)
-        Pf = np.zeros(self.subframe_num).astype(int)
-        bf = np.zeros(self.subframe_num)
-        
+    
+
+    def anonymize_lsf(self,lsf):
+        alpha,beta,a,b = self.anonypara
+        for i in range(0,6,2):
+            lsf[i] = lsf[i] + alpha*(lsf[i+1]-lsf[i])
+            lsf[i+1] = lsf[i+1] - alpha*(lsf[i+1]-lsf[i])
+        for i in range(6):
+            lsf[i] = lsf[i] + lsf[i]*(beta-1)*(np.pi-lsf[i])/np.pi
+        for i in range(6):
+            lsf[i] = a * lsf[i] + b
+        return lsf
+    
+    def encoder_lsf(self, x, i):        
         if np.mean(np.power(x,2)) < 0.00001:  # judge whether muted
             ak = [1] + [0]*self.LPCorder
             ak = np.array(ak)
