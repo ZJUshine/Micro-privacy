@@ -3,8 +3,8 @@ FilePath: formant_vs_draw.py
 Author: zjushine
 Date: 2023-04-14 17:48:23
 LastEditors: zjushine
-LastEditTime: 2023-04-15 10:18:24
-Description: 原始、McAdams、VoiceMask共振峰提取
+LastEditTime: 2023-04-19 20:58:07
+Description: 原始、McAdams、VoiceMask画出频谱观察共振峰
 Copyright (c) 2023 by ${zjushine}, All Rights Reserved. 
 '''
 #%%
@@ -35,7 +35,7 @@ ax[0, 2].plot(time_axis, voicemask_data)
 
 
 # 定义窗口函数
-window_size = 480
+window_size = len(orig_data)
 window = np.hanning(window_size)
 orig_data *= window
 mcadams_data *= window
@@ -47,11 +47,13 @@ fft_spectrum_mcadams = np.fft.fft(mcadams_data)
 fft_spectrum_voicemask = np.fft.fft(voicemask_data)
 
 # 计算频率轴
-freqs = np.fft.fftfreq(len(orig_data)) * sr
+freqs = np.fft.fftfreq(len(orig_data), 1/sr)
 
 ax[1, 0].plot(freqs[:len(freqs)//4], np.abs(fft_spectrum_orig[:len(fft_spectrum_orig)//4]))
 ax[1, 1].plot(freqs[:len(freqs)//4], np.abs(fft_spectrum_mcadams[:len(fft_spectrum_mcadams)//4]))
 ax[1, 2].plot(freqs[:len(freqs)//4], np.abs(fft_spectrum_voicemask[:len(fft_spectrum_voicemask)//4]))
+
+
 
 # 添加标题和轴标签
 ax[0, 0].set_title('orig')
