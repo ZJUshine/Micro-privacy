@@ -3,7 +3,7 @@ FilePath: anony_mopso.py
 Author: zjushine
 Date: 2023-04-06 13:53:14
 LastEditors: zjushine
-LastEditTime: 2023-04-25 15:38:53
+LastEditTime: 2023-04-26 09:47:42
 Description: mospo 优化问题
 Copyright (c) 2023 by ${zjushine}, All Rights Reserved. 
 '''
@@ -25,7 +25,7 @@ results_output_path = f"results/{_date}_{now}"
 
 problem = omopso()
 mutation_probability = 1.0 / problem.number_of_variables
-max_evaluations = 4000
+max_evaluations = 2000
 swarm_size = 20
 
 algorithm = OMOPSO(

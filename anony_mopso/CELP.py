@@ -128,12 +128,14 @@ class CELP(object):
     
 
     def anonymize_lsf(self,lsf):
-        alpha,beta = self.anonypara
+        alpha,beta,a,b = self.anonypara
         for i in range(0,6,2):
             lsf[i] = lsf[i] + alpha*(lsf[i+1]-lsf[i])
             lsf[i+1] = lsf[i+1] - alpha*(lsf[i+1]-lsf[i])
         for i in range(6):
             lsf[i] = lsf[i] + lsf[i]*(beta-1)*(np.pi-lsf[i])/np.pi
+        for i in range(6):
+            lsf[i] = a*lsf[i]+b
         return lsf
     
     def encoder_lsf(self, x, i):        
