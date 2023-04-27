@@ -3,7 +3,7 @@ FilePath: anony_mopso.py
 Author: zjushine
 Date: 2023-04-06 13:53:14
 LastEditors: zjushine
-LastEditTime: 2023-04-26 09:47:42
+LastEditTime: 2023-04-27 16:39:43
 Description: mospo 优化问题
 Copyright (c) 2023 by ${zjushine}, All Rights Reserved. 
 '''
@@ -18,6 +18,7 @@ from jmetal.util.solution import (
 )
 from define_mopso_problem import omopso
 from datetime import datetime
+
 _date = '{}'.format(datetime.now().strftime("%m%d"))
 now = '{}'.format(datetime.now().strftime("%H%M"))
 
@@ -25,8 +26,8 @@ results_output_path = f"results/{_date}_{now}"
 
 problem = omopso()
 mutation_probability = 1.0 / problem.number_of_variables
-max_evaluations = 2000
-swarm_size = 20
+max_evaluations = 20000
+swarm_size = 40
 
 algorithm = OMOPSO(
     problem=problem,

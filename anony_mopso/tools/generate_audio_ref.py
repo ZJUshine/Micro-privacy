@@ -34,7 +34,7 @@ with open(output_file, 'w', encoding='utf-8') as f:
     # 遍历文件名,构建文件路径
     for txt_file in txt_files:
         for line in open(txt_file):
-            if (len(line) > 50):
+            if (len(line) > 100):
                 continue
             # 找到第一个空格的位置
             index = line.find(' ')
