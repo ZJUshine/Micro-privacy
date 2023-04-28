@@ -3,7 +3,7 @@ FilePath: define_mopso_problem.py
 Author: zjushine
 Date: 2023-04-07 14:02:33
 LastEditors: zjushine
-LastEditTime: 2023-04-27 16:40:02
+LastEditTime: 2023-04-28 11:24:35
 Description: 定义一个MOPSO的优化问题
 Copyright (c) 2023 by ${zjushine}, All Rights Reserved. 
 '''
@@ -15,10 +15,12 @@ import soundfile as sf
 import fastwer
 import pandas as pd
 import pystoi
+import sys
+sys.path.append('../speechbrain')
 from speechbrain.pretrained import SpeakerRecognition
-verification = SpeakerRecognition.from_hparams(source="speechbrain/spkrec-ecapa-voxceleb", savedir="/home/lxc/zero/speechbrain/pretrained_models/spkrec-ecapa-voxceleb")
+verification = SpeakerRecognition.from_hparams(source="speechbrain/spkrec-ecapa-voxceleb", savedir="../speechbrain/pretrained_models/spkrec-ecapa-voxceleb")
 from speechbrain.pretrained import EncoderDecoderASR
-asr_model = EncoderDecoderASR.from_hparams(source="speechbrain/asr-crdnn-rnnlm-librispeech", savedir="/home/lxc/zero/speechbrain/pretrained_models/asr-crdnn-rnnlm-librispeech")
+asr_model = EncoderDecoderASR.from_hparams(source="speechbrain/asr-crdnn-rnnlm-librispeech", savedir="../speechbrain/pretrained_models/asr-crdnn-rnnlm-librispeech")
 import torch
 torch.set_num_threads(4)
 class omopso(FloatProblem):
@@ -33,7 +35,7 @@ class omopso(FloatProblem):
 
     def evaluate(self, solution: FloatSolution) -> FloatSolution:
         x = solution.variables
-        df = pd.read_table('/home/lxc/zero/Micro-privacy/anony_mopso/tools/test-clean-trans.txt', sep=',')
+        df = pd.read_table('./tools/test-clean-trans.txt', sep=',')
         random_row = df.sample(n=1)
         audio_name = random_row.values[0][0]
         ref = [random_row.values[0][1]]

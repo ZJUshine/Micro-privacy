@@ -5,4 +5,6 @@ pandas
 pystoi
 soundfile
 speechbrain
-
+jmetalpy
+pybind11
+fastwer
