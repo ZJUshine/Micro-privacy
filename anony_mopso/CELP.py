@@ -98,7 +98,7 @@ class CELP(object):
         Zw = np.zeros(self.LPCorder)
         Zi = np.zeros(self.LPCorder)                                           # memory hangover in filters
         lsfs = np.zeros((self.frame_num, self.LPCorder))
-        
+        modif_lsfs = np.zeros((self.frame_num, self.LPCorder))
         # print(f'Frame number: {self.frame_num}')
         for i in tqdm(range(self.frame_num)):
             # time index of current frame
@@ -106,10 +106,11 @@ class CELP(object):
 
             # extract params with AbS
             lsf = self.encoder_lsf(self.data[n], i)
-            if (self.anony):
-                lsf = self.anonymize_lsf(lsf)
             lsfs[i,:] = lsf
-            SCB_indxf, theta0f, akf, Pf, bf, ebuf, Zf, Zw = self.decoder_lsf( lsf, self.data[n], bbuf, ebuf, Zf, Zw, i)
+            if (self.anony):
+                modif_lsf = self.anonymize_lsf(lsf)
+            modif_lsfs[i,:] = modif_lsf
+            SCB_indxf, theta0f, akf, Pf, bf, ebuf, Zf, Zw = self.decoder_lsf( modif_lsf, self.data[n], bbuf, ebuf, Zf, Zw, i)
             
             # synthesis new frame
             self.new_data[n], ebuf2, Zi = self.celpsyns(akf, SCB_indxf, theta0f, Pf, bf, ebuf2, Zi)
@@ -124,7 +125,7 @@ class CELP(object):
         if self.save_wav == True:
             sf.write(self.save_path, self.new_data, self.sr)
             # print(f'Save output file: {self.save_path}')
-        return self.new_data, lsfs
+        return self.new_data, lsfs,modif_lsfs
     
 
     def anonymize_lsf(self,lsf):
@@ -136,6 +137,10 @@ class CELP(object):
             lsf[i] = lsf[i] + lsf[i]*(beta-1)*(np.pi-lsf[i])/np.pi
         for i in range(6):
             lsf[i] = a*lsf[i]+b
+        lsf.sort()
+        # for i in range(len(lsf) - 1):
+        #     if lsf[i + 1] - lsf[i] < 0.01:
+        #         print("unstable lsf")
         return lsf
     
     def encoder_lsf(self, x, i):        
