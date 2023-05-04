@@ -3,21 +3,19 @@ FilePath: define_moeda_problem.py
 Author: zjushine
 Date: 2023-05-03 13:59:18
 LastEditors: zjushine
-LastEditTime: 2023-05-04 17:32:33
+LastEditTime: 2023-05-04 21:50:45
 Description: 定义一个moeda问题
 Copyright (c) 2023 by ${zjushine}, All Rights Reserved. 
 '''
 from jmetal.core.problem import FloatProblem
 from jmetal.core.solution import FloatSolution
-from anony_jMetalPy.anony_mopso.CELP import CELP
+from CELP import CELP
 import soundfile as sf
 import fastwer
 import pandas as pd
 import pystoi
 import torch
-import sys
-sys.path.append("../")
-from anony_jMetalPy.anony_mopso.CELP import CELP
+import os
 # 导入speechbrain预训练模型
 from speechbrain.pretrained import SpeakerRecognition
 verification = SpeakerRecognition.from_hparams(source="speechbrain/spkrec-ecapa-voxceleb", savedir="../../pretrained_models/spkrec-ecapa-voxceleb")
@@ -70,6 +68,8 @@ class moeda(FloatProblem):
             scores.append(score)
             stoi_values.append(1-stoi_value)
             wer_values.append(wer)
+            os.remove(f'./results/anony_audio/{audio_name}.flac')
+            os.remove(f'./{audio_name}.flac')
         score_mark = sum(scores)/len(scores)
         stoi_value_mark = sum(stoi_values)/len(stoi_values)
         wer_mark = sum(wer_values)/len(wer_values)

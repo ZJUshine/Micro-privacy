@@ -3,3 +3,6 @@
 *.pyc
 *.png
 *.flac
+anony_jMetalPy/anony_moeda/model_checkpoints/*
+anony_jMetalPy/anony_mopso/model_checkpoints/*
+pretrained_models/*
