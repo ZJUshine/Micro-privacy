@@ -3,7 +3,7 @@ FilePath: anony_mopso.py
 Author: zjushine
 Date: 2023-04-06 13:53:14
 LastEditors: zjushine
-LastEditTime: 2023-04-29 22:26:20
+LastEditTime: 2023-04-29 23:04:05
 Description: mospo 优化问题
 Copyright (c) 2023 by ${zjushine}, All Rights Reserved. 
 '''
@@ -27,12 +27,12 @@ results_output_path = f"results/{_date}_{now}"
 problem = omopso()
 mutation_probability = 1.0 / problem.number_of_variables
 max_evaluations = 200
-swarm_size = 20
+swarm_size = 40
 
 algorithm = OMOPSO(
     problem=problem,
     swarm_size = swarm_size,
-    epsilon=0.075,
+    epsilon=0.75,
     uniform_mutation=UniformMutation(probability=mutation_probability, perturbation=0.2),
     non_uniform_mutation=NonUniformMutation(probability=mutation_probability, perturbation=0.2, max_iterations = int(max_evaluations / swarm_size)),
     leaders=CrowdingDistanceArchive(swarm_size),
