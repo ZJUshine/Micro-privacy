@@ -3,7 +3,7 @@ FilePath: define_moead_problem.py
 Author: zjushine
 Date: 2023-05-03 13:59:18
 LastEditors: zjushine
-LastEditTime: 2023-05-04 21:50:45
+LastEditTime: 2023-05-05 15:39:20
 Description: 定义一个moead问题
 Copyright (c) 2023 by ${zjushine}, All Rights Reserved. 
 '''
@@ -16,11 +16,18 @@ import pandas as pd
 import pystoi
 import torch
 import os
+import datetime
 # 导入speechbrain预训练模型
 from speechbrain.pretrained import SpeakerRecognition
 verification = SpeakerRecognition.from_hparams(source="speechbrain/spkrec-ecapa-voxceleb", savedir="../../pretrained_models/spkrec-ecapa-voxceleb")
 from speechbrain.pretrained import EncoderASR
 asr_model = EncoderASR.from_hparams(source="speechbrain/asr-wav2vec2-librispeech", savedir="../../pretrained_models/asr-wav2vec2-librispeech")
+
+_date = '{}'.format(datetime.now().strftime("%m%d"))
+now = '{}'.format(datetime.now().strftime("%H%M"))
+
+results_output_path = f"results/{_date}_{now}"
+
 class moead(FloatProblem):
     """
     opt_target : 
@@ -81,6 +88,9 @@ class moead(FloatProblem):
             else:
                 solution.objectives = [score_mark,wer_mark]
         print(f"epoch:{self.epoch},score:{score_mark},stio:{stoi_value_mark},wer:{wer_mark}")
+
+        with open(f'{results_output_path}/data.txt', "a") as f:
+                f.write(f"epoch:{self.epoch},score:{score_mark},stio:{stoi_value_mark},wer:{wer_mark}")
         return solution
     
     def get_name(self):
