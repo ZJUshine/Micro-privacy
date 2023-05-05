@@ -1,9 +1,9 @@
 '''
-FilePath: anony_moead.py
+FilePath: anony_moeda.py
 Author: zjushine
 Date: 2023-05-03 13:59:18
 LastEditors: zjushine
-LastEditTime: 2023-05-04 17:09:21
+LastEditTime: 2023-05-05 16:11:03
 Description: 使用moead算法优化系数
 Copyright (c) 2023 by ${zjushine}, All Rights Reserved. 
 '''
@@ -17,7 +17,7 @@ from jmetal.util.solution import (
 )
 from define_moead_problem import moead
 from datetime import datetime
-
+import os
 import argparse
 
 parser = argparse.ArgumentParser()
@@ -29,9 +29,12 @@ _date = '{}'.format(datetime.now().strftime("%m%d"))
 now = '{}'.format(datetime.now().strftime("%H%M"))
 
 results_output_path = f"results/{_date}_{now}"
-
+os.makedirs(results_output_path)
 problem = moead(opt_target = args.opt_target)
 max_evaluations = args.max_evaluations
+
+with open(f'{results_output_path}/data.txt', "a") as f:
+        f.write(f"max_evaluations:{args.max_evaluations},opt_target:{args.opt_target}\n")
 
 algorithm = MOEAD(
     problem=problem,

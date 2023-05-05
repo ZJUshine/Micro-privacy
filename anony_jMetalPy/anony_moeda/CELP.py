@@ -124,7 +124,7 @@ class CELP(object):
 
         if self.save_wav == True:
             sf.write(self.save_path, self.new_data, self.sr)
-            print(f'Save output file: {self.save_path}')
+            # print(f'Save output file: {self.save_path}')
         return self.new_data, lsfs,modif_lsfs
     
 
