@@ -1,10 +1,10 @@
 '''
-FilePath: define_moeda_problem.py
+FilePath: define_moead_problem.py
 Author: zjushine
 Date: 2023-05-03 13:59:18
 LastEditors: zjushine
 LastEditTime: 2023-05-04 21:50:45
-Description: 定义一个moeda问题
+Description: 定义一个moead问题
 Copyright (c) 2023 by ${zjushine}, All Rights Reserved. 
 '''
 from jmetal.core.problem import FloatProblem
@@ -21,7 +21,7 @@ from speechbrain.pretrained import SpeakerRecognition
 verification = SpeakerRecognition.from_hparams(source="speechbrain/spkrec-ecapa-voxceleb", savedir="../../pretrained_models/spkrec-ecapa-voxceleb")
 from speechbrain.pretrained import EncoderASR
 asr_model = EncoderASR.from_hparams(source="speechbrain/asr-wav2vec2-librispeech", savedir="../../pretrained_models/asr-wav2vec2-librispeech")
-class moeda(FloatProblem):
+class moead(FloatProblem):
     """
     opt_target : 
         Type : str by default None

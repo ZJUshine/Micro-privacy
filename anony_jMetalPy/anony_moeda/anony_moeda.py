@@ -1,10 +1,10 @@
 '''
-FilePath: anony_moeda.py
+FilePath: anony_moead.py
 Author: zjushine
 Date: 2023-05-03 13:59:18
 LastEditors: zjushine
 LastEditTime: 2023-05-04 17:09:21
-Description: 使用moeda算法优化系数
+Description: 使用moead算法优化系数
 Copyright (c) 2023 by ${zjushine}, All Rights Reserved. 
 '''
 from jmetal.algorithm.multiobjective.moead import MOEAD
@@ -15,7 +15,7 @@ from jmetal.util.solution import (
     print_function_values_to_file,
     print_variables_to_file
 )
-from define_moeda_problem import moeda
+from define_moead_problem import moead
 from datetime import datetime
 
 import argparse
@@ -30,7 +30,7 @@ now = '{}'.format(datetime.now().strftime("%H%M"))
 
 results_output_path = f"results/{_date}_{now}"
 
-problem = moeda(opt_target = args.opt_target)
+problem = moead(opt_target = args.opt_target)
 max_evaluations = args.max_evaluations
 
 algorithm = MOEAD(
@@ -64,5 +64,5 @@ from jmetal.util.solution import get_non_dominated_solutions
 front = get_non_dominated_solutions(solutions)
 
 plot_front = Plot(title='Pareto front approximation', axis_labels=['x', 'y'])
-plot_front.plot(front, label='MOEDA-Micro_moeda',filename=f"{results_output_path}/MOEDA-Micro_moeda",format="png")
+plot_front.plot(front, label='moead-Micro_moead',filename=f"{results_output_path}/moead-Micro_moead",format="png")
 
