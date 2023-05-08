@@ -37,14 +37,17 @@ class moead(FloatProblem):
     def __init__(self,opt_target = None):
         super().__init__()
         self.opt_target = opt_target
-        self.number_of_variables = 4
+        # self.number_of_variables = 4
+        self.number_of_variables = 3
         if self.opt_target == 'both':
             self.number_of_objectives = 3
         else:
             self.number_of_objectives = 2
         self.number_of_constraints = 0
-        self.lower_bound = [-0.2, 0.8,0.8,-0.2] 
-        self.upper_bound = [0.2, 1.2,1.2,0.2]
+        # self.lower_bound = [-0.2, 0.8,0.8,-0.2] 
+        # self.upper_bound = [0.2, 1.2,1.2,0.2]
+        self.lower_bound = [0.8,0.8,-0.2] 
+        self.upper_bound = [1.2,1.2,0.2]
         self.epoch = 0
 
     def evaluate(self, solution: FloatSolution) -> FloatSolution:
@@ -90,7 +93,7 @@ class moead(FloatProblem):
         print(f"epoch:{self.epoch},score:{score_mark},stio:{stoi_value_mark},wer:{wer_mark}")
 
         with open(f'{results_output_path}/data.txt', "a") as f:
-                f.write(f"epoch:{self.epoch},score:{score_mark},stio:{stoi_value_mark},wer:{wer_mark}\n")
+                f.write(f"epoch:{self.epoch},score:{score_mark},stio:{stoi_value_mark},wer:{wer_mark},x:{x}\n")
         wandb.log({"score": score_mark, "stio": stoi_value_mark,"wer":wer_mark})
         return solution
     

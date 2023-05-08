@@ -21,7 +21,7 @@ import os
 import argparse
 import wandb
 parser = argparse.ArgumentParser()
-parser.add_argument('--max_evaluations', type=int, default=200, help='最大迭代次数')
+parser.add_argument('--max_evaluations', type=int, default=100, help='最大迭代次数')
 parser.add_argument('--population_size', type=int, default=300, help='子问题数量')
 parser.add_argument('--opt_target', type=str, default="both", help= "优化目标，可选项为：'stoi' 'wer' 'both'")
 args = parser.parse_args()
@@ -38,6 +38,7 @@ with open(f'{results_output_path}/data.txt', "a") as f:
         f.write(f"max_evaluations:{args.max_evaluations},population_size:{args.population_size}opt_target:{args.opt_target}\n")
 run = wandb.init(
     project="anony_moead",
+    name=f'{args.max_evaluations}_{args.population_size}_{args.opt_target}_{_date}_{now}',
     config={
         "max_evaluations": args.max_evaluations,
         "population_size": args.population_size,

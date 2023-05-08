@@ -1,11 +1,9 @@
 # pip install -r requirements.txt
 speechbrain
+transformers
 librosa
-soundfile
-numpy
 pystoi
 jmetalpy
 pybind11
 fastwer
 wandb
-pandas

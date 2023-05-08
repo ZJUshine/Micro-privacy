@@ -25,7 +25,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument('--max_evaluations', type=int, default=100, help='最大迭代次数')
 parser.add_argument('--swarm_size', type=int, default=20, help='粒子群大小')
 parser.add_argument('--epsilon', type=float, default=0.075, help='epsilon')
-parser.add_argument('--opt_target', type=str, default="both", help= "优化目标，可选项为：'stoi' 'wer' 'both'")
+parser.add_argument('--opt_target', type=str, default="wer", help= "优化目标，可选项为：'stoi' 'wer' 'both'")
 args = parser.parse_args()
 
 _date = '{}'.format(datetime.now().strftime("%m%d"))
@@ -36,6 +36,7 @@ with open(f'{results_output_path}/data.txt', "a") as f:
         f.write(f"max_evaluations:{args.max_evaluations},swarm_size:{args.swarm_size},epsilon:{args.epsilon}opt_target:{args.opt_target}\n")
 run = wandb.init(
     project="anony_mopso",
+    name=f'{args.max_evaluations}_{args.swarm_size}_{args.epsilon}_{args.opt_target}{_date}_{now}',
     config={
         "max_evaluations": args.max_evaluations,
         "swarm_size": args.swarm_size,

@@ -8,5 +8,6 @@ anony_jMetalPy/anony_moead/wandb/*
 anony_jMetalPy/anony_mopso/model_checkpoints/*
 anony_jMetalPy/anony_mopso/results/*
 anony_jMetalPy/anony_mopso/wandb/*
+anony_jMetalPy/evaluate/model_checkpoints/*
 pretrained_models/*
 
