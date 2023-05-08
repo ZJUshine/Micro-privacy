@@ -3,10 +3,11 @@ FilePath: define_moead_problem.py
 Author: zjushine
 Date: 2023-05-03 13:59:18
 LastEditors: zjushine
-LastEditTime: 2023-05-05 16:00:35
+LastEditTime: 2023-05-06 17:08:38
 Description: 定义一个moead问题
 Copyright (c) 2023 by ${zjushine}, All Rights Reserved. 
 '''
+
 from jmetal.core.problem import FloatProblem
 from jmetal.core.solution import FloatSolution
 from CELP import CELP
@@ -22,12 +23,10 @@ from speechbrain.pretrained import SpeakerRecognition
 verification = SpeakerRecognition.from_hparams(source="speechbrain/spkrec-ecapa-voxceleb", savedir="../../pretrained_models/spkrec-ecapa-voxceleb")
 from speechbrain.pretrained import EncoderASR
 asr_model = EncoderASR.from_hparams(source="speechbrain/asr-wav2vec2-librispeech", savedir="../../pretrained_models/asr-wav2vec2-librispeech")
-
 _date = '{}'.format(datetime.now().strftime("%m%d"))
 now = '{}'.format(datetime.now().strftime("%H%M"))
 
 results_output_path = f"results/{_date}_{now}"
-
 class moead(FloatProblem):
     """
     opt_target : 
@@ -43,8 +42,8 @@ class moead(FloatProblem):
         else:
             self.number_of_objectives = 2
         self.number_of_constraints = 0
-        self.lower_bound = [0, 0.8,0.9,-0.1] 
-        self.upper_bound = [0.2, 1.2,1.1,0.1]
+        self.lower_bound = [-0.2, 0.8,0.8,-0.2] 
+        self.upper_bound = [0.2, 1.2,1.2,0.2]
         self.epoch = 0
 
     def evaluate(self, solution: FloatSolution) -> FloatSolution:
@@ -94,4 +93,4 @@ class moead(FloatProblem):
         return solution
     
     def get_name(self):
-        return "mopso"
+        return "moead"

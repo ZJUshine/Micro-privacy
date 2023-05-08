@@ -6,3 +6,6 @@
 anony_jMetalPy/anony_moead/model_checkpoints/*
 anony_jMetalPy/anony_mopso/model_checkpoints/*
 pretrained_models/*
+*.mopso
+*.txt
+*.moead

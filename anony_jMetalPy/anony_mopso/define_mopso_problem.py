@@ -10,19 +10,25 @@ Copyright (c) 2023 by ${zjushine}, All Rights Reserved.
 
 from jmetal.core.problem import FloatProblem
 from jmetal.core.solution import FloatSolution
+from CELP import CELP
 import soundfile as sf
 import fastwer
 import pandas as pd
 import pystoi
 import torch
 import os
-from CELP import CELP
+from datetime import datetime
 # 导入speechbrain预训练模型
 from speechbrain.pretrained import SpeakerRecognition
 verification = SpeakerRecognition.from_hparams(source="speechbrain/spkrec-ecapa-voxceleb", savedir="../../pretrained_models/spkrec-ecapa-voxceleb")
 from speechbrain.pretrained import EncoderASR
 asr_model = EncoderASR.from_hparams(source="speechbrain/asr-wav2vec2-librispeech", savedir="../../pretrained_models/asr-wav2vec2-librispeech")
+_date = '{}'.format(datetime.now().strftime("%m%d"))
+now = '{}'.format(datetime.now().strftime("%H%M"))
+
+results_output_path = f"results/{_date}_{now}"
 class omopso(FloatProblem):
+    
     """
     opt_target : 
         Type : str by default None
@@ -37,8 +43,8 @@ class omopso(FloatProblem):
         else:
             self.number_of_objectives = 2
         self.number_of_constraints = 0
-        self.lower_bound = [0, 0.8,0.9,-0.1] 
-        self.upper_bound = [0.2, 1.2,1.1,0.1]
+        self.lower_bound = [-0.2, 0.8,0.8,-0.2] 
+        self.upper_bound = [0.2, 1.2,1.2,0.2]
         self.epoch = 0
 
     def evaluate(self, solution: FloatSolution) -> FloatSolution:
@@ -82,6 +88,9 @@ class omopso(FloatProblem):
             else:
                 solution.objectives = [score_mark,wer_mark]
         print(f"epoch:{self.epoch},score:{score_mark},stio:{stoi_value_mark},wer:{wer_mark}")
+        
+        with open(f'{results_output_path}/data.txt', "a") as f:
+                f.write(f"epoch:{self.epoch},score:{score_mark},stio:{stoi_value_mark},wer:{wer_mark}\n")
         return solution
     
     def get_name(self):
