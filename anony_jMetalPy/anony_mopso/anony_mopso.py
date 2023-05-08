@@ -20,6 +20,7 @@ from define_mopso_problem import omopso
 from datetime import datetime
 import argparse
 import os
+import wandb
 parser = argparse.ArgumentParser()
 parser.add_argument('--max_evaluations', type=int, default=100, help='最大迭代次数')
 parser.add_argument('--swarm_size', type=int, default=20, help='粒子群大小')
@@ -29,11 +30,19 @@ args = parser.parse_args()
 
 _date = '{}'.format(datetime.now().strftime("%m%d"))
 now = '{}'.format(datetime.now().strftime("%H%M"))
-
 results_output_path = f"results/{_date}_{now}"
 os.makedirs(results_output_path)
 with open(f'{results_output_path}/data.txt', "a") as f:
         f.write(f"max_evaluations:{args.max_evaluations},swarm_size:{args.swarm_size},epsilon:{args.epsilon}opt_target:{args.opt_target}\n")
+run = wandb.init(
+    project="anony_mopso",
+    config={
+        "max_evaluations": args.max_evaluations,
+        "swarm_size": args.swarm_size,
+        "epsilon": args.epsilon,
+        "opt_target": args.opt_target,
+    })
+
 problem = omopso(opt_target = args.opt_target)
 mutation_probability = 1.0 / problem.number_of_variables
 max_evaluations = args.max_evaluations

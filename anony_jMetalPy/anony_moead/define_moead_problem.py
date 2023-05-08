@@ -18,6 +18,7 @@ import pystoi
 import torch
 import os
 from datetime import datetime
+import wandb
 # 导入speechbrain预训练模型
 from speechbrain.pretrained import SpeakerRecognition
 verification = SpeakerRecognition.from_hparams(source="speechbrain/spkrec-ecapa-voxceleb", savedir="../../pretrained_models/spkrec-ecapa-voxceleb")
@@ -90,6 +91,7 @@ class moead(FloatProblem):
 
         with open(f'{results_output_path}/data.txt', "a") as f:
                 f.write(f"epoch:{self.epoch},score:{score_mark},stio:{stoi_value_mark},wer:{wer_mark}\n")
+        wandb.log({"score": score_mark, "stio": stoi_value_mark,"wer":wer_mark})
         return solution
     
     def get_name(self):

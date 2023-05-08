@@ -19,9 +19,10 @@ from define_moead_problem import moead
 from datetime import datetime
 import os
 import argparse
-
+import wandb
 parser = argparse.ArgumentParser()
 parser.add_argument('--max_evaluations', type=int, default=200, help='最大迭代次数')
+parser.add_argument('--population_size', type=int, default=300, help='子问题数量')
 parser.add_argument('--opt_target', type=str, default="both", help= "优化目标，可选项为：'stoi' 'wer' 'both'")
 args = parser.parse_args()
 
@@ -34,11 +35,17 @@ problem = moead(opt_target = args.opt_target)
 max_evaluations = args.max_evaluations
 
 with open(f'{results_output_path}/data.txt', "a") as f:
-        f.write(f"max_evaluations:{args.max_evaluations},opt_target:{args.opt_target}\n")
-
+        f.write(f"max_evaluations:{args.max_evaluations},population_size:{args.population_size}opt_target:{args.opt_target}\n")
+run = wandb.init(
+    project="anony_moead",
+    config={
+        "max_evaluations": args.max_evaluations,
+        "population_size": args.population_size,
+        "opt_target": args.opt_target,
+    })
 algorithm = MOEAD(
     problem=problem,
-    population_size=300,
+    population_size=args.population_size,
     crossover=DifferentialEvolutionCrossover(CR=1.0, F=0.5, K=0.5),
     mutation=PolynomialMutation(probability=1.0 / problem.number_of_variables, distribution_index=20),
     aggregative_function=Tschebycheff(dimension=problem.number_of_objectives),

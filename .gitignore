@@ -1,11 +1,12 @@
 *.test
 *.log
 *.pyc
-*.png
 *.flac
 anony_jMetalPy/anony_moead/model_checkpoints/*
+anony_jMetalPy/anony_moead/results/*
+anony_jMetalPy/anony_moead/wandb/*
 anony_jMetalPy/anony_mopso/model_checkpoints/*
+anony_jMetalPy/anony_mopso/results/*
+anony_jMetalPy/anony_mopso/wandb/*
 pretrained_models/*
-*.mopso
-*.txt
-*.moead
+
