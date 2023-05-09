@@ -23,7 +23,7 @@ import wandb
 parser = argparse.ArgumentParser()
 parser.add_argument('--max_evaluations', type=int, default=100, help='最大迭代次数')
 parser.add_argument('--population_size', type=int, default=300, help='子问题数量')
-parser.add_argument('--opt_target', type=str, default="both", help= "优化目标，可选项为：'stoi' 'wer' 'both'")
+parser.add_argument('--opt_target', type=str, default="wer", help= "优化目标，可选项为：'stoi' 'wer' 'both'")
 args = parser.parse_args()
 
 _date = '{}'.format(datetime.now().strftime("%m%d"))
