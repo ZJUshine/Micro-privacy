@@ -5,6 +5,7 @@ import pandas as pd
 import pystoi
 import torch
 import os
+import numpy as np
 # 导入speechbrain预训练模型
 from speechbrain.pretrained import SpeakerRecognition
 verification = SpeakerRecognition.from_hparams(source="speechbrain/spkrec-ecapa-voxceleb", savedir="../pretrained_models/spkrec-ecapa-voxceleb")
@@ -29,16 +30,15 @@ for row in rows:
     stoi_value = pystoi.stoi(orig_data, code_data, sr, extended=False)
     asr_result = asr_model.transcribe_file(f'/mnt/lxc/Micro-privacy_data/CELP_code/{audio_name}.flac')
     wer = fastwer.score([asr_result], ref)
-    print(f"name:{audio_name},score:{score},stio:{stoi_value},wer:{wer}")
+    print(f"name:{audio_name},score:{score},stoi:{stoi_value},wer:{wer}")
     with open(f'CELP_influence_data.txt', "a") as f:
-        f.write(f"name:{audio_name},score:{score},stio:{stoi_value},wer:{wer}\n")
+        f.write(f"name:{audio_name},score:{score},stoi:{stoi_value},wer:{wer}\n")
     scores.append(score)
     stoi_values.append(1-stoi_value)
     wer_values.append(wer)
     os.remove(f'./{audio_name}.flac')
-score_mark = sum(scores)/len(scores)
-stoi_value_mark = sum(stoi_values)/len(stoi_values)
-wer_mark = sum(wer_values)/len(wer_values)
 
 with open(f'CELP_influence_data.txt', "a") as f:
-    f.write(f"name:{audio_name},score:{score_mark},stio:{stoi_value_mark},wer:{wer_mark}")
+    f.write(f"average score:{np.mean(scores)},stoi:{np.mean(stoi_values)},wer:{np.mean(wer_values)}\n")
+    f.write(f"min score:{np.min(scores)},stoi:{np.min(stoi_values)},wer:{np.min(wer_values)}\n")
+    f.write(f"max score:{np.max(scores)},stoi:{np.max(stoi_values)},wer:{np.max(wer_values)}\n")

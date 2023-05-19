@@ -129,11 +129,10 @@ class CELP(object):
     
 
     def anonymize_lsf(self,lsf):
-        # alpha,beta,a,b = self.anonypara
-        # for i in range(6,len(lsf)-1,2):
-        #     lsf[i] = lsf[i] + alpha*(lsf[i+1]-lsf[i])
-        #     lsf[i+1] = lsf[i+1] - alpha*(lsf[i+1]-lsf[i])\
-        beta,a,b = self.anonypara
+        alpha,beta,a,b = self.anonypara
+        for i in range(6,len(lsf)-1,2):
+            lsf[i] = lsf[i] + alpha*(lsf[i+1]-lsf[i])
+            lsf[i+1] = lsf[i+1] - alpha*(lsf[i+1]-lsf[i])
         for i in range(6,len(lsf)-1):
             lsf[i] = lsf[i] + lsf[i]*(beta-1)*(np.pi-lsf[i])/np.pi
         for i in range(6,len(lsf)-1):
@@ -145,9 +144,9 @@ class CELP(object):
             if lsf[i] < 0:
                     lsf[i] = 0
         lsf.sort()
-        # for i in range(len(lsf) - 1):
-        #     if lsf[i + 1] - lsf[i] < 0.01:
-        #         print("unstable lsf")
+        for i in range(len(lsf) - 1):
+            if lsf[i + 1] - lsf[i] < 0.01:
+                print("unstable lsf")
         return lsf
     
     def encoder_lsf(self, x, i):        
