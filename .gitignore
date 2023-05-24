@@ -13,3 +13,4 @@ CELP_influence/model_checkpoints/*
 pretrained_models/*
 preanalysis/different_people_LSF/fig/*
 preanalysis/different_people_LSF/TIMIT/*
+anony_geatpy/model_checkpoints/*

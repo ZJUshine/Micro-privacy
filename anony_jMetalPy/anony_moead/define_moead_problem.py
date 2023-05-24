@@ -20,8 +20,10 @@ import os
 from datetime import datetime
 import wandb
 # 导入speechbrain预训练模型
-from speechbrain.pretrained import EncoderClassifier
-classifier = EncoderClassifier.from_hparams(source="speechbrain/spkrec-xvect-voxceleb", savedir="../../pretrained_models/spkrec-xvect-voxceleb")
+# from speechbrain.pretrained import EncoderClassifier
+# classifier = EncoderClassifier.from_hparams(source="speechbrain/spkrec-xvect-voxceleb", savedir="../../pretrained_models/spkrec-xvect-voxceleb")
+from speechbrain.pretrained import SpeakerRecognition
+verification = SpeakerRecognition.from_hparams(source="speechbrain/spkrec-ecapa-voxceleb", savedir="../../pretrained_models/spkrec-ecapa-voxceleb")
 from speechbrain.pretrained import EncoderASR
 asr_model = EncoderASR.from_hparams(source="speechbrain/asr-wav2vec2-librispeech", savedir="../../pretrained_models/asr-wav2vec2-librispeech")
 sim_cal = torch.nn.CosineSimilarity(dim=-1, eps=1e-6)
@@ -38,17 +40,15 @@ class moead(FloatProblem):
     def __init__(self,opt_target = None):
         super().__init__()
         self.opt_target = opt_target
-        self.number_of_variables = 4
+        self.number_of_variables = 10
         # self.number_of_variables = 3
         if self.opt_target == 'both':
             self.number_of_objectives = 3
         else:
             self.number_of_objectives = 2
         self.number_of_constraints = 0
-        self.lower_bound = [-0.2, 0.8,0.8,-0.2] 
-        self.upper_bound = [0.2, 1.2,1.2,0.2]
-        # self.lower_bound = [0.8,0.8,-0.2] 
-        # self.upper_bound = [1.2,1.2,0.2]
+        self.lower_bound = [-0.05,-0.05,-0.1,-0.1,-0.15,-0.15,-0.2,-0.2,-0.25,-0.25] 
+        self.upper_bound = [0.05,0.05,0.1,0.1,0.15,0.15,0.2,0.2,0.25,0.25]
         self.epoch = 0
 
     def evaluate(self, solution: FloatSolution) -> FloatSolution:
@@ -70,9 +70,10 @@ class moead(FloatProblem):
             # print(f"modif_lsfs:{modif_lsfs}")
             orig_data, sr = sf.read(wave_path)
             anon_data, sr = sf.read(f'./results/anony_audio/{audio_name}.flac')
-            embeddings1 = classifier.encode_batch(torch.tensor(orig_data))
-            embeddings2 = classifier.encode_batch(torch.tensor(anon_data))
-            score = sim_cal(embeddings1, embeddings2)
+            # embeddings1 = classifier.encode_batch(torch.tensor(orig_data))
+            # embeddings2 = classifier.encode_batch(torch.tensor(anon_data))
+            # score = sim_cal(embeddings1, embeddings2)
+            score, prediction = verification.verify_batch(torch.tensor(orig_data),torch.tensor(anon_data))
             stoi_value = pystoi.stoi(orig_data, anon_data, sr, extended=False)
             asr_result = asr_model.transcribe_file(f'./results/anony_audio/{audio_name}.flac')
             wer = fastwer.score([asr_result], ref)

@@ -29,9 +29,9 @@ voicemask_data = voicemask_data[frange[0]:frange[1]]
 time_axis =np.linspace(0, orig_data.size,orig_data.size)
 
 # 画出原始音频
-ax[0, 0].plot(time_axis, orig_data)
-ax[0, 1].plot(time_axis, mcadams_data)
-ax[0, 2].plot(time_axis, voicemask_data)
+ax[0, 0].plot(time_axis, orig_data,linewidth=2.0)
+ax[0, 1].plot(time_axis, mcadams_data,linewidth=2.0)
+ax[0, 2].plot(time_axis, voicemask_data,linewidth=2.0)
 
 
 # 定义窗口函数
@@ -49,19 +49,19 @@ fft_spectrum_voicemask = np.fft.fft(voicemask_data)
 # 计算频率轴
 freqs = np.fft.fftfreq(len(orig_data), 1/sr)
 
-ax[1, 0].plot(freqs[:len(freqs)//4], np.abs(fft_spectrum_orig[:len(fft_spectrum_orig)//4]))
-ax[1, 1].plot(freqs[:len(freqs)//4], np.abs(fft_spectrum_mcadams[:len(fft_spectrum_mcadams)//4]))
-ax[1, 2].plot(freqs[:len(freqs)//4], np.abs(fft_spectrum_voicemask[:len(fft_spectrum_voicemask)//4]))
+ax[1, 0].plot(freqs[:len(freqs)//4], 20*np.log10(np.abs(fft_spectrum_orig[:len(fft_spectrum_orig)//4])),linewidth=2.0)
+ax[1, 1].plot(freqs[:len(freqs)//4], 20*np.log10(np.abs(fft_spectrum_mcadams[:len(fft_spectrum_mcadams)//4])),linewidth=2.0)
+ax[1, 2].plot(freqs[:len(freqs)//4], 20*np.log10(np.abs(fft_spectrum_voicemask[:len(fft_spectrum_voicemask)//4])),linewidth=2.0)
 
 
 
 # 添加标题和轴标签
-ax[0, 0].set_title('orig')
-ax[0, 1].set_title('mcadams')
-ax[0, 2].set_title('voicemask')
-ax[1, 0].set_title('fft_spectrum_orig')
-ax[1, 1].set_title('fft_spectrum_mcadams')
-ax[1, 2].set_title('fft_spectrum_voicemask')
+ax[0, 0].set_title('orig',fontsize=20)
+ax[0, 1].set_title('mcadams',fontsize=20)
+ax[0, 2].set_title('voicemask',fontsize=20)
+ax[1, 0].set_title('fft_spectrum_orig',fontsize=20)
+ax[1, 1].set_title('fft_spectrum_mcadams',fontsize=20)
+ax[1, 2].set_title('fft_spectrum_voicemask',fontsize=20)
 
 # 调整子图之间的间距
 fig.tight_layout()
