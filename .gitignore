@@ -14,3 +14,6 @@ pretrained_models/*
 preanalysis/different_people_LSF/fig/*
 preanalysis/different_people_LSF/TIMIT/*
 anony_geatpy/model_checkpoints/*
+EVALUATION/wer/model_checkpoints/*
+EVALUATION/stoi/model_checkpoints/*
+EVALUATION/pretrained_models/*

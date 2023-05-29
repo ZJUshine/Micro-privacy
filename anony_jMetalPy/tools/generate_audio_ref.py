@@ -28,16 +28,15 @@ def get_txt_files(txt_dir_path):
 txt_files = get_txt_files(txt_dir_path)
 print(txt_dir_path)
 # 指定输出文件路径
-output_file = 'test-clean-trans-all.txt'
+output_file = 'test-clean-trans-wer.txt'
 
 with open(output_file, 'w', encoding='utf-8') as f:
     # 遍历文件名,构建文件路径
     for txt_file in txt_files:
         for line in open(txt_file):
-            # if (len(line) > 100):
-            #     continue
-            # 找到第一个空格的位置
-            index = line.find(' ')
-            # 将第一个空格替换为逗号
-            line = line[:index] + ',' + line[index + 1:]
-            f.writelines(line)
+            if (len(line) > 400):
+                # 找到第一个空格的位置
+                index = line.find(' ')
+                # 将第一个空格替换为逗号
+                line = line[:index] + ',' + line[index + 1:]
+                f.writelines(line)

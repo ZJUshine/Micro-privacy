@@ -1,0 +1,1 @@
+{'Algorithm Name': 'MOEA/D-archive', 'Algorithm MAXGEN': 15, 'Algorithm MAXTIME': None, 'Algorithm MAXEVALS': None}
