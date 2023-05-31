@@ -7,3 +7,4 @@ jmetalpy
 pybind11
 fastwer
 wandb
+geatpy

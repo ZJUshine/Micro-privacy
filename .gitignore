@@ -13,7 +13,9 @@ CELP_influence/model_checkpoints/*
 pretrained_models/*
 preanalysis/different_people_LSF/fig/*
 preanalysis/different_people_LSF/TIMIT/*
+evaluation/wer/model_checkpoints/*
+evaluation/stoi/model_checkpoints/*
+evaluation/pretrained_models/*
 anony_geatpy/model_checkpoints/*
-EVALUATION/wer/model_checkpoints/*
-EVALUATION/stoi/model_checkpoints/*
-EVALUATION/pretrained_models/*
+anony_geatpy/results/*
+anony_geatpy/wandb/*

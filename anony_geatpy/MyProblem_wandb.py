@@ -53,7 +53,8 @@ class MyProblem(ea.Problem):  # 继承Problem父类
         x10 = Vars[:, [9]]
         df = pd.read_table('../anony_jMetalPy/tools/test-clean-trans.txt', sep=',')
         # 随机抽取10条音频
-        random_rows = df.sample(n=5).values
+        # random_rows = df.sample(n=5).values
+        random_rows = df.values[:5]
         scores_all = [];stoi_values_all = [];wer_values_all = []
         for i in range(len(x1)):
             x = [x1[i],x2[i],x3[i],x4[i],x5[i],x6[i],x7[i],x8[i],x9[i],x10[i]]

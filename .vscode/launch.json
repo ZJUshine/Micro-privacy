@@ -13,8 +13,6 @@
             "console": "internalConsole",
             "justMyCode": false,
             "args": [
-                // "--attack_type", "pulse_robust_zzh",
-                // // "--target_sentence", ""
             ]
         },
     ]

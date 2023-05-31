@@ -7,8 +7,8 @@ if __name__ == '__main__':
     _date = '{}'.format(datetime.now().strftime("%m%d"))
     now = '{}'.format(datetime.now().strftime("%H%M"))
     arg_Encoding='RI'
-    arg_NIND = 15  # 种群规模
-    arg_MAXGEN = 15  # 最大进化代数
+    arg_NIND = 10  # 种群规模
+    arg_MAXGEN = 10  # 最大进化代数
     run = wandb.init(
     project="geatpy_moea_MOEAD_archive_templet",
     name=f'Encoding:{arg_Encoding}_NIND:{arg_NIND}_MAXGEN:{arg_MAXGEN}_{_date}_{now}',
